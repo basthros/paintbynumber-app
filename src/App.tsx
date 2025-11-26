@@ -6,6 +6,8 @@ import { Workbench } from './components/Workbench';
 function App() {
   const [palette, setPalette] = useState<PaletteColor[]>([]);
   const [activeTab, setActiveTab] = useState<'lab' | 'workbench'>('lab');
+  const [targetImage, setTargetImage] = useState<File | null>(null);
+  const [targetImagePreview, setTargetImagePreview] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -74,7 +76,13 @@ function App() {
             )}
           </div>
         ) : (
-          <Workbench palette={palette} />
+          <Workbench
+            palette={palette}
+            targetImage={targetImage}
+            setTargetImage={setTargetImage}
+            targetImagePreview={targetImagePreview}
+            setTargetImagePreview={setTargetImagePreview}
+          />
         )}
       </main>
 

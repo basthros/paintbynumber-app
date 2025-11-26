@@ -5,11 +5,19 @@ import { generatePaintByNumber, downloadImage } from '../utils';
 
 interface WorkbenchProps {
   palette: PaletteColor[];
+  targetImage: File | null;
+  setTargetImage: (file: File | null) => void;
+  targetImagePreview: string | null;
+  setTargetImagePreview: (preview: string | null) => void;
 }
 
-export const Workbench: React.FC<WorkbenchProps> = ({ palette }) => {
-  const [targetImage, setTargetImage] = useState<File | null>(null);
-  const [targetImagePreview, setTargetImagePreview] = useState<string | null>(null);
+export const Workbench: React.FC<WorkbenchProps> = ({
+  palette,
+  targetImage,
+  setTargetImage,
+  targetImagePreview,
+  setTargetImagePreview,
+}) => {
   const [threshold, setThreshold] = useState(50);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
