@@ -2,8 +2,8 @@ import axios from 'axios';
 import type { PaletteColor, GenerateResponse } from './types';
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.DEV ? 'http://localhost:8000' : '');
 /**
  * Extract color from a specific point in an image
  */
@@ -164,7 +164,7 @@ export const generatePaintByNumber = async (
 
     // Make API request
     const response = await axios.post<GenerateResponse>(
-      `${API_BASE_URL}/generate`,
+      `${API_BASE_URL}/api/generate`,
       formData,
       {
         headers: {
