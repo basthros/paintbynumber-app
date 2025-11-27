@@ -139,6 +139,32 @@ export const rgbToHex = (rgb: [number, number, number]): string => {
 };
 
 /**
+ * Simulate gradual progress
+ */
+const simulateProgress = (
+  onProgress: ((progress: number) => void) | undefined,
+  from: number,
+  to: number,
+  duration: number
+): Promise<void> => {
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const range = to - from;
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      onProgress?.(from + progress * range);
+
+      if (progress >= 1) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 50);
+  });
+};
+
+/**
  * Generate paint-by-number from image
  */
 export const generatePaintByNumber = async (
@@ -148,11 +174,12 @@ export const generatePaintByNumber = async (
   onProgress?: (progress: number) => void
 ): Promise<GenerateResponse> => {
   try {
+    // Simulate initial processing
+    await simulateProgress(onProgress, 0, 5, 300);
+
     // Compress image before upload
-    onProgress?.(10);
     const compressedImage = await compressImage(imageFile);
-    
-    onProgress?.(20);
+    await simulateProgress(onProgress, 5, 15, 500);
 
     // Prepare form data
     const formData = new FormData();
@@ -160,10 +187,10 @@ export const generatePaintByNumber = async (
     formData.append('palette', JSON.stringify(palette));
     formData.append('threshold', threshold.toString());
 
-    onProgress?.(30);
+    await simulateProgress(onProgress, 15, 20, 200);
 
     // Make API request
-    const response = await axios.post<GenerateResponse>(
+    const responsePromise = axios.post<GenerateResponse>(
       `${API_BASE_URL}/api/generate`,
       formData,
       {
@@ -172,14 +199,23 @@ export const generatePaintByNumber = async (
         },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
-            const uploadProgress = 30 + (progressEvent.loaded / progressEvent.total) * 40;
+            const uploadProgress = 20 + (progressEvent.loaded / progressEvent.total) * 30;
             onProgress?.(uploadProgress);
           }
         },
       }
     );
 
-    onProgress?.(100);
+    // Simulate processing progress while waiting for response
+    const processingSimulation = (async () => {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await simulateProgress(onProgress, 50, 90, 2000);
+    })();
+
+    const [response] = await Promise.all([responsePromise, processingSimulation]);
+
+    // Complete
+    await simulateProgress(onProgress, 90, 100, 300);
 
     return response.data;
   } catch (error) {

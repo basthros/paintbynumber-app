@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { PaletteColor } from './types';
+import type { PaletteColor, GenerateResponse } from './types';
 import { PaintLab } from './components/PaintLab';
 import { Workbench } from './components/Workbench';
 
@@ -8,6 +8,13 @@ function App() {
   const [activeTab, setActiveTab] = useState<'lab' | 'workbench'>('lab');
   const [targetImage, setTargetImage] = useState<File | null>(null);
   const [targetImagePreview, setTargetImagePreview] = useState<string | null>(null);
+  const [result, setResult] = useState<GenerateResponse | null>(null);
+
+  const handleReset = () => {
+    setTargetImage(null);
+    setTargetImagePreview(null);
+    setResult(null);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -82,6 +89,9 @@ function App() {
             setTargetImage={setTargetImage}
             targetImagePreview={targetImagePreview}
             setTargetImagePreview={setTargetImagePreview}
+            result={result}
+            setResult={setResult}
+            onReset={handleReset}
           />
         )}
       </main>

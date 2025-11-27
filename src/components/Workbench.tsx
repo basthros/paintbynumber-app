@@ -9,6 +9,9 @@ interface WorkbenchProps {
   setTargetImage: (file: File | null) => void;
   targetImagePreview: string | null;
   setTargetImagePreview: (preview: string | null) => void;
+  result: GenerateResponse | null;
+  setResult: (result: GenerateResponse | null) => void;
+  onReset: () => void;
 }
 
 export const Workbench: React.FC<WorkbenchProps> = ({
@@ -17,11 +20,13 @@ export const Workbench: React.FC<WorkbenchProps> = ({
   setTargetImage,
   targetImagePreview,
   setTargetImagePreview,
+  result,
+  setResult,
+  onReset,
 }) => {
   const [threshold, setThreshold] = useState(50);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [result, setResult] = useState<GenerateResponse | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [error, setError] = useState<string | null>(null);
 
@@ -173,12 +178,9 @@ export const Workbench: React.FC<WorkbenchProps> = ({
               className="w-full h-auto"
             />
             <button
-              onClick={() => {
-                setTargetImage(null);
-                setTargetImagePreview(null);
-                setResult(null);
-              }}
+              onClick={onReset}
               className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+              title="Remove image and reset"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -249,19 +251,34 @@ export const Workbench: React.FC<WorkbenchProps> = ({
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-gray-800">Results</h3>
-                <button
-                  onClick={handleDownload}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Download
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={onReset}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Reset
+                  </button>
+                  <button
+                    onClick={handleDownload}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Download
+                  </button>
+                </div>
               </div>
 
               {/* View Toggle */}
